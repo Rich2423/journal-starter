@@ -52,18 +52,17 @@ class TestEntryCreateModel:
         with pytest.raises(ValidationError):
             EntryCreate(**invalid_data)
 
-    def test_entry_create_empty_strings_allowed(self):
-        """Test that empty strings are allowed (only None is invalid)."""
+    def test_entry_create_empty_strings_not_allowed(self):
+        """Test that empty strings are rejected by validation."""
+        import pytest
+        from pydantic import ValidationError
         data = {
             "work": "",
             "struggle": "",
             "intention": ""
         }
-        entry = EntryCreate(**data)
-
-        assert entry.work == ""
-        assert entry.struggle == ""
-        assert entry.intention == ""
+        with pytest.raises(ValidationError):
+            EntryCreate(**data)
 
 
 class TestEntryModel:
