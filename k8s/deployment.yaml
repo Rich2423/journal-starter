@@ -1,0 +1,40 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: journal-api
+  namespace: default
+  labels:
+    app: journal-api
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: journal-api
+  template:
+    metadata:
+      labels:
+        app: journal-api
+    spec:
+      containers:
+        - name: journal-api
+          image: acrjournalprod.azurecr.io/journal-api:latest
+          ports:
+            - containerPort: 8000
+          env:
+            - name: DATABASE_URL
+              valueFrom:
+                secretKeyRef:
+                  name: journal-secrets
+                  key: database-url
+            - name: OPENAI_API_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: journal-secrets
+                  key: openai-api-key
+          resources:
+            requests:
+              memory: "128Mi"
+              cpu: "100m"
+            limits:
+              memory: "256Mi"
+              cpu: "500m"
